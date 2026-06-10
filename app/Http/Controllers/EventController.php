@@ -42,8 +42,18 @@ class EventController extends Controller
             'title' => 'required|string|max:255',
             'community_id' => 'required|exists:communities,id',
             'description' => 'required|string',
-            'date' => 'required|date',
-            'time' => 'required|string',
+            'date' => 'required|date|after_or_equal:today',
+            'time' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->date === now()->toDateString()) {
+                        if (strtotime($value) < strtotime(now()->toTimeString())) {
+                            $fail('The time must be in the future if the event is today.');
+                        }
+                    }
+                },
+            ],
             'location' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'max_attendees' => 'required|integer|min:1',
@@ -84,6 +94,9 @@ class EventController extends Controller
 
     public function register(Event $event)
     {
+        if ($event->is_past) {
+            return back()->with('error', 'Cannot register for a past event.');
+        }
         $event->attendees()->syncWithoutDetaching([auth()->id()]);
         $event->attendee_count = $event->attendees()->count();
         $event->save();
@@ -92,6 +105,9 @@ class EventController extends Controller
 
     public function unregister(Event $event)
     {
+        if ($event->is_past) {
+            return back()->with('error', 'Cannot unregister from a past event.');
+        }
         $event->attendees()->detach(auth()->id());
         $event->attendee_count = $event->attendees()->count();
         $event->save();

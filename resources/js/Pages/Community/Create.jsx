@@ -5,6 +5,20 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 
+const CATEGORIES = [
+    "Technology",
+    "Sports & Fitness",
+    "Arts & Culture",
+    "Music & Audio",
+    "Gaming",
+    "Education",
+    "Business & Finance",
+    "Health & Wellness",
+    "Food & Drink",
+    "Travel & Outdoor",
+    "Other"
+];
+
 export default function Create() {
     const { data, setData, post, processing, errors } = useForm({
         name: '',
@@ -43,16 +57,22 @@ export default function Create() {
                             </div>
 
                             <div>
-                                <InputLabel htmlFor="category" value="Category (e.g. Technology, Sports)" />
-                                <TextInput
+                                <InputLabel htmlFor="category" value="Category" />
+                                <input
+                                    list="category-options"
                                     id="category"
-                                    type="text"
                                     name="category"
                                     value={data.category}
-                                    className="mt-1 block w-full"
                                     onChange={(e) => setData('category', e.target.value)}
+                                    className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                    placeholder="Select or type a category..."
                                     required
                                 />
+                                <datalist id="category-options">
+                                    {CATEGORIES.map(cat => (
+                                        <option key={cat} value={cat} />
+                                    ))}
+                                </datalist>
                                 <InputError message={errors.category} className="mt-2" />
                             </div>
 

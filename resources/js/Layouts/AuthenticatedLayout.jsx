@@ -120,7 +120,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </div>
                             ) : (
                                 <div className="space-x-4">
-                                    <Link href={route('login')} className="text-gray-600 hover:text-gray-900 font-medium">Log in</Link>
+                                    <Link href={route('login')} className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition">Log in</Link>
                                     <Link href={route('register')} className="bg-indigo-600 text-white px-4 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Register</Link>
                                 </div>
                             )}

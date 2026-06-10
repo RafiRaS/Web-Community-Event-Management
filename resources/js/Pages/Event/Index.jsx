@@ -28,6 +28,11 @@ export default function Index({ events }) {
                                 <div className="absolute top-4 right-4 bg-white dark:bg-gray-900 px-3 py-1 rounded-full text-xs font-bold text-indigo-700 dark:text-indigo-400 shadow">
                                     {event.category}
                                 </div>
+                                {event.is_past && (
+                                    <div className="absolute top-4 left-4 bg-gray-800 text-white px-3 py-1 rounded-full text-xs font-bold shadow">
+                                        Completed
+                                    </div>
+                                )}
                             </div>
                             <div className="p-5 flex flex-col flex-grow">
                                 <h3 className="font-bold text-xl text-gray-900 dark:text-gray-100 mb-2">{event.title}</h3>

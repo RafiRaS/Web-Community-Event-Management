@@ -16,15 +16,26 @@ export default function Show({ event, isRegistered }) {
         <AuthenticatedLayout
             header={
                 <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                        {event.title}
-                    </h2>
-                    <button 
-                        onClick={toggleRegister}
-                        className={`px-6 py-2.5 font-bold rounded-lg shadow transition ${isRegistered ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
-                    >
-                        {isRegistered ? 'Cancel Registration' : 'Register Now'}
-                    </button>
+                    <div className="flex items-center space-x-4">
+                        <button onClick={() => window.history.back()} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition" aria-label="Go Back">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        </button>
+                        <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+                            {event.title}
+                        </h2>
+                    </div>
+                    {event.is_past ? (
+                        <div className="px-6 py-2.5 font-bold rounded-lg shadow bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed text-center">
+                            Event Completed
+                        </div>
+                    ) : (
+                        <button 
+                            onClick={toggleRegister}
+                            className={`px-6 py-2.5 font-bold rounded-lg shadow transition ${isRegistered ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
+                        >
+                            {isRegistered ? 'Cancel Registration' : 'Register Now'}
+                        </button>
+                    )}
                 </div>
             }
         >

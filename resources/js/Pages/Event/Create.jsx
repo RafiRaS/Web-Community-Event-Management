@@ -5,6 +5,20 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 
+const CATEGORIES = [
+    "Technology",
+    "Sports & Fitness",
+    "Arts & Culture",
+    "Music & Audio",
+    "Gaming",
+    "Education",
+    "Business & Finance",
+    "Health & Wellness",
+    "Food & Drink",
+    "Travel & Outdoor",
+    "Other"
+];
+
 export default function Create({ communities }) {
     const { data, setData, post, processing, errors } = useForm({
         title: '',
@@ -78,15 +92,21 @@ export default function Create({ communities }) {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <InputLabel htmlFor="category" value="Category" />
-                                        <TextInput
+                                        <input
+                                            list="category-options"
                                             id="category"
-                                            type="text"
                                             name="category"
                                             value={data.category}
-                                            className="mt-1 block w-full"
                                             onChange={(e) => setData('category', e.target.value)}
+                                            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                            placeholder="Select or type a category..."
                                             required
                                         />
+                                        <datalist id="category-options">
+                                            {CATEGORIES.map(cat => (
+                                                <option key={cat} value={cat} />
+                                            ))}
+                                        </datalist>
                                         <InputError message={errors.category} className="mt-2" />
                                     </div>
                                     <div>
@@ -116,6 +136,7 @@ export default function Create({ communities }) {
                                             className="mt-1 block w-full"
                                             onChange={(e) => setData('date', e.target.value)}
                                             required
+                                            min={new Date().toLocaleDateString('en-CA')}
                                         />
                                         <InputError message={errors.date} className="mt-2" />
                                     </div>
@@ -129,6 +150,7 @@ export default function Create({ communities }) {
                                             className="mt-1 block w-full"
                                             onChange={(e) => setData('time', e.target.value)}
                                             required
+                                            min={data.date === new Date().toLocaleDateString('en-CA') ? new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : undefined}
                                         />
                                         <InputError message={errors.time} className="mt-2" />
                                     </div>

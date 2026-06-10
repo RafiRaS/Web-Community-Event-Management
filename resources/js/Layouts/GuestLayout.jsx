@@ -26,7 +26,7 @@ export default function GuestLayout({ children }) {
                 </Link>
             </div>
 
-            <div className="mt-6 w-full overflow-hidden bg-white dark:bg-gray-800 px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg transition-colors duration-200">
+            <div className="mt-6 w-full overflow-hidden bg-white dark:bg-gray-800 px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg transition-colors duration-200 text-gray-900 dark:text-gray-100">
                 {children}
             </div>
         </div>

@@ -20,7 +20,14 @@ export default function TrustedApply({ auth }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Apply for Trusted Organizer</h2>}
+            header={
+                <div className="flex items-center space-x-4">
+                    <button onClick={() => window.history.back()} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition" aria-label="Go Back">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    </button>
+                    <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Apply for Trusted Organizer</h2>
+                </div>
+            }
         >
             <Head title="Apply for Trusted Organizer" />
 

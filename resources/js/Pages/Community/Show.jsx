@@ -16,9 +16,14 @@ export default function Show({ community, isJoined }) {
         <AuthenticatedLayout
             header={
                 <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                        {community.name}
-                    </h2>
+                    <div className="flex items-center space-x-4">
+                        <button onClick={() => window.history.back()} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition" aria-label="Go Back">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        </button>
+                        <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+                            {community.name}
+                        </h2>
+                    </div>
                     <div className="space-x-3">
                         <Link href={route('forum.show', community.id)} className="px-4 py-2 bg-purple-100 text-purple-700 font-bold rounded-lg shadow-sm hover:bg-purple-200 transition">
                             Open Group Chat
@@ -57,7 +62,11 @@ export default function Show({ community, isJoined }) {
                             <Link href={route('events.show', event.id)} key={event.id} className="block p-5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl hover:shadow-md transition">
                                 <h4 className="font-bold text-lg dark:text-gray-100 mb-2">{event.title}</h4>
                                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{event.date} • {event.location}</p>
-                                <span className="text-indigo-600 dark:text-indigo-400 text-sm font-semibold">View Details &rarr;</span>
+                                {event.is_past ? (
+                                    <span className="text-gray-500 dark:text-gray-400 text-sm font-semibold">Event Completed</span>
+                                ) : (
+                                    <span className="text-indigo-600 dark:text-indigo-400 text-sm font-semibold">View Details &rarr;</span>
+                                )}
                             </Link>
                         ))}
                         {community.events?.length === 0 && <p className="text-gray-500 dark:text-gray-400">No events found.</p>}
