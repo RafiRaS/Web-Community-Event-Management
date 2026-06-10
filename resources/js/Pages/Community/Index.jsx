@@ -74,9 +74,20 @@ export default function Index({ communities, categories, filters }) {
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {communities?.map(community => (
                         <Link href={route('communities.show', community.id)} key={community.id} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-lg transition">
-                            <div className="h-32 bg-gradient-to-br from-indigo-500 to-purple-600"></div>
+                            {community.cover_image_uri && community.cover_image_uri.startsWith('/storage') ? (
+                                <img src={community.cover_image_uri} alt={community.name} className="h-32 w-full object-cover" />
+                            ) : (
+                                <div className="h-32 bg-gradient-to-br from-indigo-500 to-purple-600"></div>
+                            )}
                             <div className="p-5">
-                                <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 mb-1">{community.name}</h3>
+                                <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 mb-1 flex items-center">
+                                    {community.name}
+                                    {!!community.organizer?.is_trusted && (
+                                        <svg className="w-5 h-5 ml-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20" title="Trusted Organizer">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                        </svg>
+                                    )}
+                                </h3>
                                 <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4">{community.description}</p>
                                 <div className="flex justify-between items-center text-sm">
                                     <span className="font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/50 px-2 py-1 rounded-md">{community.category}</span>

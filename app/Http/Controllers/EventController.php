@@ -7,6 +7,7 @@ use App\Models\Community;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
@@ -85,6 +86,7 @@ class EventController extends Controller
             'location' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'max_attendees' => 'required|integer|min:1',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         // Ensure the selected community belongs to the organizer
@@ -106,9 +108,85 @@ class EventController extends Controller
         $event->category = $request->category;
         $event->max_attendees = $request->max_attendees;
         $event->attendee_count = 0;
+
+        if ($request->hasFile('cover_image')) {
+            $path = $request->file('cover_image')->store('events', 'public');
+            $event->cover_image_uri = '/storage/' . $path;
+        }
+
         $event->save();
 
         return redirect()->route('events.show', $event->id)->with('message', 'Event created successfully!');
+    }
+
+    public function edit(Event $event)
+    {
+        $event->load('community');
+        if (auth()->id() !== $event->community->organizer_id && auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $communities = Community::where('organizer_id', auth()->id())->get();
+
+        return Inertia::render('Event/Edit', [
+            'event' => $event,
+            'communities' => $communities
+        ]);
+    }
+
+    public function update(Request $request, Event $event)
+    {
+        $event->load('community');
+        if (auth()->id() !== $event->community->organizer_id && auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'community_id' => 'required|exists:communities,id',
+            'description' => 'required|string',
+            'date' => 'required|date',
+            'time' => 'required|string',
+            'location' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'max_attendees' => 'required|integer|min:1',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // If community changes, check ownership
+        if ($request->community_id != $event->community_id) {
+            $community = Community::where('id', $request->community_id)
+                ->where('organizer_id', auth()->id())
+                ->first();
+
+            if (!$community && auth()->user()->role !== 'admin') {
+                abort(403, 'You can only assign events to your own communities.');
+            }
+        }
+
+        $event->title = $request->title;
+        $event->community_id = $request->community_id;
+        $event->description = $request->description;
+        $event->date = $request->date;
+        $event->time = $request->time;
+        $event->location = $request->location;
+        $event->category = $request->category;
+        $event->max_attendees = $request->max_attendees;
+
+        if ($request->hasFile('cover_image')) {
+            if ($event->cover_image_uri) {
+                $oldPath = str_replace('/storage/', '', $event->cover_image_uri);
+                if (Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
+            }
+            $path = $request->file('cover_image')->store('events', 'public');
+            $event->cover_image_uri = '/storage/' . $path;
+        }
+
+        $event->save();
+
+        return redirect()->route('events.show', $event->id)->with('message', 'Event updated successfully!');
     }
 
     public function show(Event $event)

@@ -6,12 +6,13 @@ use App\Models\Community;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class CommunityController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Community::withCount('members');
+        $query = Community::withCount('members')->with('organizer:id,is_trusted');
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
@@ -38,7 +39,7 @@ class CommunityController extends Controller
 
     public function show(Community $community)
     {
-        $community->load(['events', 'members']);
+        $community->load(['events', 'members', 'organizer:id,is_trusted']);
         return Inertia::render('Community/Show', [
             'community' => $community,
             'isJoined' => auth()->check() ? $community->members->contains(auth()->id()) : false
@@ -63,6 +64,7 @@ class CommunityController extends Controller
             'name' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'description' => 'required|string',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $community = new Community();
@@ -72,12 +74,64 @@ class CommunityController extends Controller
         $community->organizer_id = auth()->id();
         $community->organizer_name = auth()->user()->name;
         $community->member_count = 1; // Organizer joins by default
+
+        if ($request->hasFile('cover_image')) {
+            $path = $request->file('cover_image')->store('communities', 'public');
+            $community->cover_image_uri = '/storage/' . $path;
+        }
+
         $community->save();
 
         // Organizer is added as the first member
         $community->members()->attach(auth()->id());
 
         return redirect()->route('communities.show', $community->id)->with('message', 'Community created successfully!');
+    }
+
+    public function edit(Community $community)
+    {
+        if (auth()->id() !== $community->organizer_id && auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return Inertia::render('Community/Edit', [
+            'community' => $community
+        ]);
+    }
+
+    public function update(Request $request, Community $community)
+    {
+        if (auth()->id() !== $community->organizer_id && auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'description' => 'required|string',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $community->name = $request->name;
+        $community->category = $request->category;
+        $community->description = $request->description;
+
+        if ($request->hasFile('cover_image')) {
+            // Delete old image if it exists
+            if ($community->cover_image_uri) {
+                $oldPath = str_replace('/storage/', '', $community->cover_image_uri);
+                if (Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
+            }
+
+            $path = $request->file('cover_image')->store('communities', 'public');
+            $community->cover_image_uri = '/storage/' . $path;
+        }
+
+        $community->save();
+
+        return redirect()->route('communities.show', $community->id)->with('message', 'Community updated successfully!');
     }
 
     public function join(Community $community)

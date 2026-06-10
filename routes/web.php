@@ -36,11 +36,15 @@ Route::middleware('auth')->group(function () {
     // Authenticated Actions
     Route::get('/communities/create', [CommunityController::class, 'create'])->name('communities.create');
     Route::post('/communities', [CommunityController::class, 'store'])->name('communities.store');
+    Route::get('/communities/{community}/edit', [CommunityController::class, 'edit'])->name('communities.edit');
+    Route::post('/communities/{community}/update', [CommunityController::class, 'update'])->name('communities.update');
     Route::post('/communities/{community}/join', [CommunityController::class, 'join'])->name('communities.join');
     Route::post('/communities/{community}/leave', [CommunityController::class, 'leave'])->name('communities.leave');
 
     Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
     Route::post('/events', [EventController::class, 'store'])->name('events.store');
+    Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
+    Route::post('/events/{event}/update', [EventController::class, 'update'])->name('events.update');
     Route::post('/events/{event}/register', [EventController::class, 'register'])->name('events.register');
     Route::post('/events/{event}/unregister', [EventController::class, 'unregister'])->name('events.unregister');
 

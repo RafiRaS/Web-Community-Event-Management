@@ -19,29 +19,29 @@ const CATEGORIES = [
     "Other"
 ];
 
-export default function Create({ communities }) {
+export default function Edit({ event, communities }) {
     const { data, setData, post, processing, errors } = useForm({
-        title: '',
-        community_id: communities?.length > 0 ? communities[0].id : '',
-        description: '',
-        date: '',
-        time: '',
-        location: '',
-        category: '',
-        max_attendees: 100,
+        title: event.title || '',
+        community_id: event.community_id || (communities?.length > 0 ? communities[0].id : ''),
+        description: event.description || '',
+        date: event.date || '',
+        time: event.time || '',
+        location: event.location || '',
+        category: event.category || '',
+        max_attendees: event.max_attendees || 100,
         cover_image: null,
     });
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('events.store'));
+        post(route('events.update', event.id));
     };
 
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">Create Event</h2>}
+            header={<h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">Edit Event</h2>}
         >
-            <Head title="Create Event" />
+            <Head title="Edit Event" />
 
             <div className="py-12">
                 <div className="mx-auto max-w-2xl sm:px-6 lg:px-8">
@@ -137,7 +137,6 @@ export default function Create({ communities }) {
                                             className="mt-1 block w-full"
                                             onChange={(e) => setData('date', e.target.value)}
                                             required
-                                            min={new Date().toLocaleDateString('en-CA')}
                                         />
                                         <InputError message={errors.date} className="mt-2" />
                                     </div>
@@ -151,7 +150,6 @@ export default function Create({ communities }) {
                                             className="mt-1 block w-full"
                                             onChange={(e) => setData('time', e.target.value)}
                                             required
-                                            min={data.date === new Date().toLocaleDateString('en-CA') ? new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : undefined}
                                         />
                                         <InputError message={errors.time} className="mt-2" />
                                     </div>
@@ -186,7 +184,13 @@ export default function Create({ communities }) {
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="cover_image" value="Cover Image (Optional)" />
+                                    <InputLabel htmlFor="cover_image" value="Cover Image (Optional, leave blank to keep current)" />
+                                    {event.cover_image_uri && event.cover_image_uri.startsWith('/storage') && (
+                                        <div className="mt-2 mb-2">
+                                            <img src={event.cover_image_uri} alt="Current Cover" className="w-full h-32 object-cover rounded-md" />
+                                            <p className="text-xs text-gray-500 mt-1">Current cover image</p>
+                                        </div>
+                                    )}
                                     <input
                                         id="cover_image"
                                         type="file"
@@ -199,7 +203,7 @@ export default function Create({ communities }) {
 
                                 <div className="flex items-center justify-end mt-4">
                                     <PrimaryButton className="ml-4" disabled={processing}>
-                                        Create Event
+                                        Update Event
                                     </PrimaryButton>
                                 </div>
                             </form>

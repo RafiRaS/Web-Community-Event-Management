@@ -84,16 +84,30 @@ export default function Index({ events, categories, filters }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {events?.map(event => (
                         <Link href={route('events.show', event.id)} key={event.id} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-lg transition flex flex-col">
-                            <div className="h-40 bg-gradient-to-br from-blue-500 to-indigo-600 relative">
-                                <div className="absolute top-4 right-4 bg-white dark:bg-gray-900 px-3 py-1 rounded-full text-xs font-bold text-indigo-700 dark:text-indigo-400 shadow">
-                                    {event.category}
-                                </div>
-                                {event.is_past && (
-                                    <div className="absolute top-4 left-4 bg-gray-800 text-white px-3 py-1 rounded-full text-xs font-bold shadow">
-                                        Completed
+                            {event.cover_image_uri && event.cover_image_uri.startsWith('/storage') ? (
+                                <div className="h-40 relative">
+                                    <img src={event.cover_image_uri} alt={event.title} className="w-full h-full object-cover" />
+                                    <div className="absolute top-4 right-4 bg-white dark:bg-gray-900 px-3 py-1 rounded-full text-xs font-bold text-indigo-700 dark:text-indigo-400 shadow">
+                                        {event.category}
                                     </div>
-                                )}
-                            </div>
+                                    {event.is_past && (
+                                        <div className="absolute top-4 left-4 bg-gray-800 text-white px-3 py-1 rounded-full text-xs font-bold shadow">
+                                            Completed
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="h-40 bg-gradient-to-br from-blue-500 to-indigo-600 relative">
+                                    <div className="absolute top-4 right-4 bg-white dark:bg-gray-900 px-3 py-1 rounded-full text-xs font-bold text-indigo-700 dark:text-indigo-400 shadow">
+                                        {event.category}
+                                    </div>
+                                    {event.is_past && (
+                                        <div className="absolute top-4 left-4 bg-gray-800 text-white px-3 py-1 rounded-full text-xs font-bold shadow">
+                                            Completed
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                             <div className="p-5 flex flex-col flex-grow">
                                 <h3 className="font-bold text-xl text-gray-900 dark:text-gray-100 mb-2">{event.title}</h3>
                                 <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4 flex-grow">{event.description}</p>

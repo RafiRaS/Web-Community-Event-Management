@@ -1,9 +1,11 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm, router } from '@inertiajs/react';
+import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 
 export default function Show({ event, isRegistered, isCommunityMember }) {
     const { post } = useForm();
+    const { auth } = usePage().props;
+    const isOrganizer = auth.user && event.community && auth.user.id === event.community.organizer_id;
 
     // Reload data when navigating back via browser history
     useEffect(() => {
@@ -45,12 +47,19 @@ export default function Show({ event, isRegistered, isCommunityMember }) {
                             Event Completed
                         </div>
                     ) : (
-                        <button 
-                            onClick={toggleRegister}
-                            className={`px-6 py-2.5 font-bold rounded-lg shadow transition ${isRegistered ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
-                        >
-                            {isRegistered ? 'Cancel Registration' : 'Register Now'}
-                        </button>
+                        <div className="flex space-x-3">
+                            {isOrganizer && (
+                                <Link href={route('events.edit', event.id)} className="px-6 py-2.5 bg-gray-100 text-gray-700 font-bold rounded-lg shadow transition hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                                    Edit Event
+                                </Link>
+                            )}
+                            <button 
+                                onClick={toggleRegister}
+                                className={`px-6 py-2.5 font-bold rounded-lg shadow transition ${isRegistered ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
+                            >
+                                {isRegistered ? 'Cancel Registration' : 'Register Now'}
+                            </button>
+                        </div>
                     )}
                 </div>
             }
@@ -59,7 +68,11 @@ export default function Show({ event, isRegistered, isCommunityMember }) {
             <div className="py-12 mx-auto max-w-5xl sm:px-6 lg:px-8 space-y-6">
                 
                 <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-2xl border border-gray-100 dark:border-gray-700">
-                    <div className="h-64 bg-gradient-to-r from-blue-600 to-indigo-700 w-full relative"></div>
+                    {event.cover_image_uri && event.cover_image_uri.startsWith('/storage') ? (
+                        <img src={event.cover_image_uri} alt={event.title} className="w-full h-64 object-cover" />
+                    ) : (
+                        <div className="h-64 bg-gradient-to-r from-blue-600 to-indigo-700 w-full relative"></div>
+                    )}
                     <div className="p-8">
                         <div className="flex justify-between items-start mb-6">
                             <div>

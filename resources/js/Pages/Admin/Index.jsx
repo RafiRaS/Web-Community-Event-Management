@@ -46,23 +46,23 @@ export default function AdminIndex({ auth, users, pendingApplications }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Admin Panel</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Admin Panel</h2>}
         >
             <Head title="Admin Panel" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         
                         {/* Tabs */}
-                        <div className="border-b border-gray-200">
+                        <div className="border-b border-gray-200 dark:border-gray-700">
                             <nav className="-mb-px flex">
                                 <button
                                     onClick={() => setActiveTab('users')}
                                     className={`w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm ${
                                         activeTab === 'users'
-                                            ? 'border-indigo-500 text-indigo-600'
-                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
+                                            : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                                     }`}
                                 >
                                     Users
@@ -71,8 +71,8 @@ export default function AdminIndex({ auth, users, pendingApplications }) {
                                     onClick={() => setActiveTab('applications')}
                                     className={`w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm ${
                                         activeTab === 'applications'
-                                            ? 'border-indigo-500 text-indigo-600'
-                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
+                                            : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                                     }`}
                                 >
                                     Trusted Applications
@@ -88,7 +88,7 @@ export default function AdminIndex({ auth, users, pendingApplications }) {
                                         <input 
                                             type="text" 
                                             placeholder="Search user or organizer..." 
-                                            className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-1/2"
+                                            className="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-1/2"
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
                                         />
@@ -101,15 +101,15 @@ export default function AdminIndex({ auth, users, pendingApplications }) {
                                     </div>
                                     <div className="space-y-4">
                                         {filteredUsers.map(user => (
-                                            <div key={user.id} className="border p-4 rounded-md flex justify-between items-center shadow-sm">
+                                            <div key={user.id} className="border dark:border-gray-700 p-4 rounded-md flex justify-between items-center shadow-sm">
                                                 <div className="flex items-center space-x-4">
-                                                    <div className="h-12 w-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xl">
+                                                    <div className="h-12 w-12 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xl">
                                                         {user.name.charAt(0).toUpperCase()}
                                                     </div>
                                                     <div>
-                                                        <p className="font-bold">{user.name}</p>
-                                                        <p className="text-sm text-gray-500">{user.email} ({user.role})</p>
-                                                        {user.is_blocked && <span className="text-xs font-bold text-red-500">BLOCKED</span>}
+                                                        <p className="font-bold dark:text-gray-100">{user.name}</p>
+                                                        <p className="text-sm text-gray-500 dark:text-gray-400">{user.email} ({user.role})</p>
+                                                        {user.is_blocked && <span className="text-xs font-bold text-red-500 dark:text-red-400">BLOCKED</span>}
                                                     </div>
                                                 </div>
                                                 {user.role !== 'ADMIN' && (
@@ -124,28 +124,28 @@ export default function AdminIndex({ auth, users, pendingApplications }) {
                                                 )}
                                             </div>
                                         ))}
-                                        {filteredUsers.length === 0 && <p className="text-gray-500 text-center py-4">No users found.</p>}
+                                        {filteredUsers.length === 0 && <p className="text-gray-500 dark:text-gray-400 text-center py-4">No users found.</p>}
                                     </div>
                                 </div>
                             ) : (
                                 <div>
                                     {pendingApplications.length === 0 ? (
-                                        <p className="text-center text-gray-500 py-12">No Pending Applications</p>
+                                        <p className="text-center text-gray-500 dark:text-gray-400 py-12">No Pending Applications</p>
                                     ) : (
                                         <div className="space-y-4">
                                             {pendingApplications.map(app => (
-                                                <div key={app.id} className="border p-4 rounded-md shadow-sm">
-                                                    <h3 className="font-bold text-lg">{app.user_name}</h3>
-                                                    <p className="text-sm text-indigo-600 font-medium mb-2">Community: {app.community_name}</p>
+                                                <div key={app.id} className="border dark:border-gray-700 p-4 rounded-md shadow-sm">
+                                                    <h3 className="font-bold text-lg dark:text-gray-100">{app.user_name}</h3>
+                                                    <p className="text-sm text-indigo-600 dark:text-indigo-400 font-medium mb-2">Community: {app.community_name}</p>
                                                     
                                                     <div className="mb-2">
-                                                        <span className="font-semibold text-xs text-gray-500 uppercase">Reason</span>
-                                                        <p className="text-sm text-gray-700">{app.reason}</p>
+                                                        <span className="font-semibold text-xs text-gray-500 dark:text-gray-400 uppercase">Reason</span>
+                                                        <p className="text-sm text-gray-700 dark:text-gray-300">{app.reason}</p>
                                                     </div>
                                                     
                                                     <div className="mb-4">
-                                                        <span className="font-semibold text-xs text-gray-500 uppercase">Experience</span>
-                                                        <p className="text-sm text-gray-700">{app.experience}</p>
+                                                        <span className="font-semibold text-xs text-gray-500 dark:text-gray-400 uppercase">Experience</span>
+                                                        <p className="text-sm text-gray-700 dark:text-gray-300">{app.experience}</p>
                                                     </div>
 
                                                     <div className="flex space-x-4">
@@ -174,44 +174,44 @@ export default function AdminIndex({ auth, users, pendingApplications }) {
             </div>
 
             <Modal show={showAddAdmin} onClose={() => setShowAddAdmin(false)}>
-                <div className="p-6">
-                    <h2 className="text-lg font-medium text-gray-900 mb-4">Add New Admin</h2>
+                <div className="p-6 bg-white dark:bg-gray-800">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Add New Admin</h2>
                     <form onSubmit={submitAddAdmin}>
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700">Full Name</label>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
                             <input 
                                 type="text" 
-                                className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                 value={data.name}
                                 onChange={e => setData('name', e.target.value)}
                                 required
                             />
-                            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                            {errors.name && <p className="text-red-500 dark:text-red-400 text-xs mt-1">{errors.name}</p>}
                         </div>
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700">Email Address</label>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</label>
                             <input 
                                 type="email" 
-                                className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                 value={data.email}
                                 onChange={e => setData('email', e.target.value)}
                                 required
                             />
-                            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                            {errors.email && <p className="text-red-500 dark:text-red-400 text-xs mt-1">{errors.email}</p>}
                         </div>
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700">Password</label>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
                             <input 
                                 type="password" 
-                                className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                 value={data.password}
                                 onChange={e => setData('password', e.target.value)}
                                 required
                             />
-                            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+                            {errors.password && <p className="text-red-500 dark:text-red-400 text-xs mt-1">{errors.password}</p>}
                         </div>
                         <div className="flex justify-end space-x-3">
-                            <button type="button" onClick={() => setShowAddAdmin(false)} className="px-4 py-2 text-gray-500 hover:text-gray-700">Cancel</button>
+                            <button type="button" onClick={() => setShowAddAdmin(false)} className="px-4 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Cancel</button>
                             <button type="submit" disabled={processing} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Add Admin</button>
                         </div>
                     </form>

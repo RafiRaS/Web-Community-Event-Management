@@ -19,24 +19,24 @@ const CATEGORIES = [
     "Other"
 ];
 
-export default function Create() {
+export default function Edit({ community }) {
     const { data, setData, post, processing, errors } = useForm({
-        name: '',
-        category: '',
-        description: '',
+        name: community.name || '',
+        category: community.category || '',
+        description: community.description || '',
         cover_image: null,
     });
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('communities.store'));
+        post(route('communities.update', community.id));
     };
 
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">Create Community</h2>}
+            header={<h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">Edit Community</h2>}
         >
-            <Head title="Create Community" />
+            <Head title="Edit Community" />
 
             <div className="py-12">
                 <div className="mx-auto max-w-2xl sm:px-6 lg:px-8">
@@ -92,7 +92,13 @@ export default function Create() {
                             </div>
 
                             <div>
-                                <InputLabel htmlFor="cover_image" value="Cover Image (Optional)" />
+                                <InputLabel htmlFor="cover_image" value="Cover Image (Optional, leave blank to keep current)" />
+                                {community.cover_image_uri && community.cover_image_uri.startsWith('/storage') && (
+                                    <div className="mt-2 mb-2">
+                                        <img src={community.cover_image_uri} alt="Current Cover" className="w-full h-32 object-cover rounded-md" />
+                                        <p className="text-xs text-gray-500 mt-1">Current cover image</p>
+                                    </div>
+                                )}
                                 <input
                                     id="cover_image"
                                     type="file"
@@ -105,7 +111,7 @@ export default function Create() {
 
                             <div className="flex items-center justify-end mt-4">
                                 <PrimaryButton className="ml-4" disabled={processing}>
-                                    Create Community
+                                    Update Community
                                 </PrimaryButton>
                             </div>
                         </form>
