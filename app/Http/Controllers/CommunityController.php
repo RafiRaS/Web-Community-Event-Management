@@ -9,11 +9,30 @@ use Illuminate\Support\Str;
 
 class CommunityController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $communities = Community::withCount('members')->get();
+        $query = Community::withCount('members');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('category', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category', $request->category);
+        }
+
+        $communities = $query->get();
+        $categories = Community::select('category')->distinct()->pluck('category')->filter()->values();
+
         return Inertia::render('Community/Index', [
-            'communities' => $communities
+            'communities' => $communities,
+            'categories' => $categories,
+            'filters' => $request->only('search', 'category')
         ]);
     }
 

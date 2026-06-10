@@ -10,11 +10,39 @@ use Illuminate\Support\Str;
 
 class EventController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $events = Event::with('community')->get();
+        $query = Event::with('community');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('category', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category', $request->category);
+        }
+
+        $events = $query->get();
+
+        if ($request->has('time') && in_array($request->time, ['upcoming', 'past'])) {
+            $isPast = $request->time === 'past';
+            $events = $events->filter(function($event) use ($isPast) {
+                return $event->is_past === $isPast;
+            })->values();
+        }
+
+        $categories = Event::select('category')->distinct()->pluck('category')->filter()->values();
+
         return Inertia::render('Event/Index', [
-            'events' => $events
+            'events' => $events,
+            'categories' => $categories,
+            'filters' => $request->only('search', 'category', 'time')
         ]);
     }
 

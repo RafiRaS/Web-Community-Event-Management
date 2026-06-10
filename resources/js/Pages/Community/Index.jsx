@@ -1,8 +1,30 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
+import { useState, useEffect, useRef } from 'react';
 
-export default function Index({ communities }) {
+export default function Index({ communities, categories, filters }) {
     const { auth } = usePage().props;
+    const [search, setSearch] = useState(filters?.search || '');
+    const [category, setCategory] = useState(filters?.category || '');
+    const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        const timeoutId = setTimeout(() => {
+            router.get(route('communities.index'), { search, category }, { preserveState: true, preserveScroll: true, replace: true });
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [search, category]);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        router.get(route('communities.index'), { search, category }, { preserveState: true, preserveScroll: true, replace: true });
+    };
 
     return (
         <AuthenticatedLayout
@@ -20,7 +42,35 @@ export default function Index({ communities }) {
             }
         >
             <Head title="Communities" />
-            <div className="py-12 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="py-12 mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
+                {/* Filters */}
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row gap-4 items-center">
+                    <form onSubmit={handleSearch} className="w-full md:w-2/3 relative">
+                        <input 
+                            type="text" 
+                            placeholder="Search communities by name, category, or description..." 
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-indigo-500 focus:border-indigo-500"
+                        />
+                        <svg className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <button type="submit" className="hidden">Search</button>
+                    </form>
+                    
+                    <div className="w-full md:w-1/3">
+                        <select
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            className="w-full py-2 px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-indigo-500 focus:border-indigo-500"
+                        >
+                            <option value="">All Categories</option>
+                            {categories?.map((cat, index) => (
+                                <option key={index} value={cat}>{cat}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {communities?.map(community => (
                         <Link href={route('communities.show', community.id)} key={community.id} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-lg transition">
