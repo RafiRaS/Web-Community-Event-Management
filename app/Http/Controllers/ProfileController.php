@@ -95,7 +95,6 @@ class ProfileController extends Controller
     public function submitTrustedApplication(Request $request): RedirectResponse
     {
         $request->validate([
-            'community_name' => 'required|string|max:255',
             'reason' => 'required|string',
             'experience' => 'required|string',
         ]);
@@ -114,7 +113,7 @@ class ProfileController extends Controller
             'id' => (string) Str::uuid(),
             'user_id' => $user->id,
             'user_name' => $user->name,
-            'community_name' => $request->community_name,
+            'community_name' => '-', // Default value since it's no longer asked
             'reason' => $request->reason,
             'experience' => $request->experience,
             'status' => 'PENDING',

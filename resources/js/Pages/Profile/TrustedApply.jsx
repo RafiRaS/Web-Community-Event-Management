@@ -7,7 +7,6 @@ import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function TrustedApply({ auth }) {
     const { data, setData, post, processing, errors } = useForm({
-        community_name: '',
         reason: '',
         experience: '',
     });
@@ -42,19 +41,6 @@ export default function TrustedApply({ auth }) {
                             </p>
 
                             <form onSubmit={submit} className="space-y-6">
-                                <div>
-                                    <InputLabel htmlFor="community_name" value="Community Name" />
-                                    <TextInput
-                                        id="community_name"
-                                        className="mt-1 block w-full"
-                                        value={data.community_name}
-                                        onChange={(e) => setData('community_name', e.target.value)}
-                                        required
-                                        isFocused
-                                    />
-                                    <InputError className="mt-2" message={errors.community_name} />
-                                </div>
-
                                 <div>
                                     <InputLabel htmlFor="reason" value="Reason to Apply" />
                                     <textarea
