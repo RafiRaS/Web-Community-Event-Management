@@ -1,10 +1,26 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
+import { useEffect } from 'react';
 
-export default function Show({ event, isRegistered }) {
+export default function Show({ event, isRegistered, isCommunityMember }) {
     const { post } = useForm();
 
+    // Reload data when navigating back via browser history
+    useEffect(() => {
+        const handlePopState = () => {
+            router.reload({ only: ['isRegistered', 'isCommunityMember', 'event'] });
+        };
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
+
     const toggleRegister = () => {
+        if (!isCommunityMember) {
+            alert('You must join the community before registering for this event.');
+            router.visit(route('communities.show', event.community_id));
+            return;
+        }
+
         if (isRegistered) {
             post(route('events.unregister', event.id));
         } else {

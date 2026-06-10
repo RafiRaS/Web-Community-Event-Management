@@ -1,8 +1,18 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
+import { useEffect } from 'react';
 
 export default function Show({ community, isJoined }) {
     const { post } = useForm();
+
+    // Reload data when navigating back via browser history
+    useEffect(() => {
+        const handlePopState = () => {
+            router.reload({ only: ['isJoined', 'community'] });
+        };
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
 
     const toggleJoin = () => {
         if (isJoined) {

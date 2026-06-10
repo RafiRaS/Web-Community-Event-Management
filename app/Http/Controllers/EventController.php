@@ -86,9 +86,16 @@ class EventController extends Controller
     public function show(Event $event)
     {
         $event->load(['community', 'attendees', 'ratings']);
+        
+        $isCommunityMember = false;
+        if (auth()->check()) {
+            $isCommunityMember = $event->community->members()->where('user_id', auth()->id())->exists();
+        }
+
         return Inertia::render('Event/Show', [
             'event' => $event,
-            'isRegistered' => auth()->check() ? $event->attendees->contains(auth()->id()) : false
+            'isRegistered' => auth()->check() ? $event->attendees->contains(auth()->id()) : false,
+            'isCommunityMember' => $isCommunityMember
         ]);
     }
 
@@ -97,6 +104,12 @@ class EventController extends Controller
         if ($event->is_past) {
             return back()->with('error', 'Cannot register for a past event.');
         }
+
+        if (!$event->community->members()->where('user_id', auth()->id())->exists()) {
+            return redirect()->route('communities.show', $event->community_id)
+                ->with('error', 'You must join the community before registering for this event.');
+        }
+
         $event->attendees()->syncWithoutDetaching([auth()->id()]);
         $event->attendee_count = $event->attendees()->count();
         $event->save();

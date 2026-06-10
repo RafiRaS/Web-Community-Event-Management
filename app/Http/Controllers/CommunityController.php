@@ -72,10 +72,27 @@ class CommunityController extends Controller
 
     public function leave(Community $community)
     {
-        $community->members()->detach(auth()->id());
+        $userId = auth()->id();
+
+        // Find events in this community that the user is attending and haven't passed yet
+        $eventsToLeave = $community->events()->whereHas('attendees', function($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->get()->filter(function($event) {
+            return !$event->is_past;
+        });
+
+        // Unregister from those events
+        foreach ($eventsToLeave as $event) {
+            $event->attendees()->detach($userId);
+            $event->attendee_count = $event->attendees()->count();
+            $event->save();
+        }
+
+        $community->members()->detach($userId);
         // Update member_count
         $community->member_count = $community->members()->count();
         $community->save();
+        
         return back()->with('message', 'Left community successfully');
     }
 }
