@@ -11,6 +11,11 @@ class ForumController extends Controller
 {
     public function show(Community $community)
     {
+        if (!auth()->check() || !$community->members()->where('user_id', auth()->id())->exists()) {
+            return redirect()->route('communities.show', $community->id)
+                ->with('error', 'You must join the community to view its group chat.');
+        }
+
         $messages = $community->forumMessages()->with('senderUser')->orderBy('created_at', 'asc')->get();
         return Inertia::render('Forum/Index', [
             'community' => $community,

@@ -22,6 +22,15 @@ export default function Show({ community, isJoined }) {
         }
     };
 
+    const openForum = (e) => {
+        e.preventDefault();
+        if (!isJoined) {
+            alert('You must join the community before opening the group chat.');
+            return;
+        }
+        router.visit(route('forum.show', community.id));
+    };
+
     return (
         <AuthenticatedLayout
             header={
@@ -35,9 +44,9 @@ export default function Show({ community, isJoined }) {
                         </h2>
                     </div>
                     <div className="space-x-3">
-                        <Link href={route('forum.show', community.id)} className="px-4 py-2 bg-purple-100 text-purple-700 font-bold rounded-lg shadow-sm hover:bg-purple-200 transition">
+                        <button onClick={openForum} className="px-4 py-2 bg-purple-100 text-purple-700 font-bold rounded-lg shadow-sm hover:bg-purple-200 transition">
                             Open Group Chat
-                        </Link>
+                        </button>
                         <button 
                             onClick={toggleJoin}
                             className={`px-4 py-2 font-bold rounded-lg shadow-sm transition ${isJoined ? 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
