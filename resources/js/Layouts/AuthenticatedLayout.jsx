@@ -32,7 +32,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
-                                {user && user.role.toUpperCase() === 'ADMIN' && (
+                                {user && (user.role.toUpperCase() === 'ADMIN' || user.role.toUpperCase() === 'SUPER_ADMIN') && (
                                     <NavLink
                                         href={route('admin.index')}
                                         active={route().current('admin.*')}
@@ -192,7 +192,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         >
                             Dashboard
                         </ResponsiveNavLink>
-                        {user && user.role.toUpperCase() === 'ADMIN' && (
+                        {user && (user.role.toUpperCase() === 'ADMIN' || user.role.toUpperCase() === 'SUPER_ADMIN') && (
                             <ResponsiveNavLink
                                 href={route('admin.index')}
                                 active={route().current('admin.*')}

@@ -13,7 +13,8 @@ class AdminController extends Controller
 {
     public function index()
     {
-        if (strtoupper(auth()->user()->role) !== 'ADMIN') {
+        $role = strtoupper(auth()->user()->role);
+        if ($role !== 'ADMIN' && $role !== 'SUPER_ADMIN') {
             abort(403);
         }
 
@@ -28,8 +29,9 @@ class AdminController extends Controller
 
     public function toggleBlock(User $user)
     {
-        if (strtoupper(auth()->user()->role) !== 'ADMIN') abort(403);
-        if (strtoupper($user->role) === 'ADMIN') {
+        $role = strtoupper(auth()->user()->role);
+        if ($role !== 'ADMIN' && $role !== 'SUPER_ADMIN') abort(403);
+        if (strtoupper($user->role) === 'ADMIN' || strtoupper($user->role) === 'SUPER_ADMIN') {
             return back()->with('error', 'Cannot block an admin');
         }
 
@@ -41,7 +43,8 @@ class AdminController extends Controller
 
     public function approveApplication(TrustedApplication $application)
     {
-        if (strtoupper(auth()->user()->role) !== 'ADMIN') abort(403);
+        $role = strtoupper(auth()->user()->role);
+        if ($role !== 'ADMIN' && $role !== 'SUPER_ADMIN') abort(403);
 
         $application->status = 'APPROVED';
         $application->save();
@@ -56,7 +59,8 @@ class AdminController extends Controller
 
     public function rejectApplication(TrustedApplication $application)
     {
-        if (strtoupper(auth()->user()->role) !== 'ADMIN') abort(403);
+        $role = strtoupper(auth()->user()->role);
+        if ($role !== 'ADMIN' && $role !== 'SUPER_ADMIN') abort(403);
 
         $application->status = 'REJECTED';
         $application->save();
@@ -71,7 +75,7 @@ class AdminController extends Controller
 
     public function addAdmin(Request $request)
     {
-        if (strtoupper(auth()->user()->role) !== 'ADMIN') abort(403);
+        if (strtoupper(auth()->user()->role) !== 'SUPER_ADMIN') abort(403);
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -79,13 +83,13 @@ class AdminController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        User::create([
-            'id' => 'user_' . time(),
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'ADMIN',
-        ]);
+        $user = new User();
+        $user->id = 'user_' . time();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->role = 'ADMIN';
+        $user->save();
 
         return back()->with('message', 'Admin added successfully');
     }

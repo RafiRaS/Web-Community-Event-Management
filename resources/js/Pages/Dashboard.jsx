@@ -52,10 +52,16 @@ export default function Dashboard({ recentEvents, topCommunities }) {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {topCommunities?.map(community => (
                                 <Link href={route('communities.show', community.id)} key={community.id} className="group block overflow-hidden rounded-2xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:shadow-lg transition">
-                                    <div className="h-32 w-full bg-indigo-100 relative">
-                                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-80 group-hover:opacity-100 transition"></div>
-                                        <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-xl">{community.name.substring(0,2).toUpperCase()}</div>
-                                    </div>
+                                    {community.cover_image_uri && community.cover_image_uri.startsWith('/storage') ? (
+                                        <div className="h-32 w-full relative">
+                                            <img src={community.cover_image_uri} alt={community.name} className="w-full h-full object-cover" />
+                                        </div>
+                                    ) : (
+                                        <div className="h-32 w-full bg-indigo-100 relative">
+                                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-80 group-hover:opacity-100 transition"></div>
+                                            <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-xl">{community.name.substring(0,2).toUpperCase()}</div>
+                                        </div>
+                                    )}
                                     <div className="p-5">
                                         <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1">{community.name}</h4>
                                         <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">{community.category}</p>

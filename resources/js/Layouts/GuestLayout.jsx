@@ -7,6 +7,16 @@ export default function GuestLayout({ children }) {
 
     return (
         <div className="flex min-h-screen flex-col items-center bg-gray-100 dark:bg-gray-900 pt-6 sm:justify-center sm:pt-0 transition-colors duration-200">
+            <div className="absolute top-4 left-4">
+                <button
+                    onClick={() => window.history.back()}
+                    className="flex items-center space-x-2 rounded-md p-2 text-gray-500 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 focus:outline-none transition font-semibold"
+                    aria-label="Go Back"
+                >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    <span>Back</span>
+                </button>
+            </div>
             <div className="absolute top-4 right-4">
                 <button
                     onClick={toggleTheme}

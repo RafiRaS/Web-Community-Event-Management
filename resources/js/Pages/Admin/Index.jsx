@@ -92,12 +92,14 @@ export default function AdminIndex({ auth, users, pendingApplications }) {
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
                                         />
-                                        <button 
-                                            onClick={() => setShowAddAdmin(true)}
-                                            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
-                                        >
-                                            Add Admin
-                                        </button>
+                                        {auth.user.role === 'SUPER_ADMIN' && (
+                                            <button 
+                                                onClick={() => setShowAddAdmin(true)}
+                                                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                                            >
+                                                Add Admin
+                                            </button>
+                                        )}
                                     </div>
                                     <div className="space-y-4">
                                         {filteredUsers.map(user => (
@@ -109,10 +111,10 @@ export default function AdminIndex({ auth, users, pendingApplications }) {
                                                     <div>
                                                         <p className="font-bold dark:text-gray-100">{user.name}</p>
                                                         <p className="text-sm text-gray-500 dark:text-gray-400">{user.email} ({user.role})</p>
-                                                        {user.is_blocked && <span className="text-xs font-bold text-red-500 dark:text-red-400">BLOCKED</span>}
+                                                        {!!user.is_blocked && <span className="text-xs font-bold text-red-500 dark:text-red-400">BLOCKED</span>}
                                                     </div>
                                                 </div>
-                                                {user.role !== 'ADMIN' && (
+                                                {user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN' && (
                                                     <button 
                                                         onClick={() => handleToggleBlock(user.id)}
                                                         className={`px-4 py-2 rounded-md text-sm font-medium ${
